@@ -199,7 +199,7 @@ namespace ECommerce.Areas.Customer.Controllers
         public IActionResult OrderConfirmation (int id)
         {
             OrderHeader orderHeader = _UnitOfWork.OrderHeader.Get(u => u.Id == id, includeProperties: "ApplicationUser");
-            if (orderHeader.PaymentStatus != SD.PaymentStatusPending) // Cusomer User
+            if (orderHeader.PaymentStatus != SD.PaymentStatusDelayedPayment) // order by Customer User
             {
                 var service = new SessionService();
                 Session session = service.Get(orderHeader.SessionId);
