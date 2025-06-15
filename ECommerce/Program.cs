@@ -35,7 +35,13 @@ namespace ECommerce
             builder.Services.AddScoped <IUnitOfWork , UnitOfWork>();
             builder.Services.AddScoped<IEmailSender, EmailSender>(); // <=
             builder.Services.AddRazorPages();// Mean that we will use razor pages
-            var app = builder.Build();
+
+			builder.Services.AddSession(options =>
+			{
+				options.IdleTimeout = TimeSpan.FromMinutes(20); // وقت انتهاء الجلسة
+				options.Cookie.HttpOnly = true; // إعدادات الكوكي
+			});
+			var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -47,10 +53,10 @@ namespace ECommerce
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseSession();
             StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey")?.Value;
             app.UseRouting();
-            app.UseAuthentication();
-
+			app.UseAuthentication();
             app.UseAuthorization();
             app.MapRazorPages(); // 
             app.MapControllerRoute(

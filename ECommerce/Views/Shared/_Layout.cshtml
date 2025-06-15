@@ -1,4 +1,8 @@
 ﻿@using ECommerce.Utility
+@using Microsoft.AspNetCore.Http
+@{
+    var count = Context.Session.GetInt32(SD.SessionCart) ?? 0;
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,8 +44,8 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area = "admin" asp-controller="order" asp-action="index">Manage Order</a>
                         </li>
-                      @*   @if(User.IsInRole(SD.Role_Admin)) *@
-                        @* { *@
+                        @if(User.IsInRole(SD.Role_Admin)) 
+                        { 
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
                                     Content Management
@@ -53,11 +57,11 @@
                                     <li><hr class="dropdown-divider"></li>
                                 </ul>
                             </li>
-                        @* } *@
+                         } 
 
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="Customer" asp-controller="ShoppingCart" asp-action="Index">
-                                <i class="bi bi-cart"></i> &nbsp; (0)
+                                <i class="bi bi-cart"></i> &nbsp; (@count)
                             </a>
                         </li>
                     </ul>
