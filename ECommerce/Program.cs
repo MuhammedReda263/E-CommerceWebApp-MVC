@@ -8,6 +8,8 @@ using ECommerce.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using ECommerce.Models;
 using Stripe;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication.Facebook;
 
 namespace ECommerce
 {
@@ -35,6 +37,25 @@ namespace ECommerce
             builder.Services.AddScoped <IUnitOfWork , UnitOfWork>();
             builder.Services.AddScoped<IEmailSender, EmailSender>(); // <=
             builder.Services.AddRazorPages();// Mean that we will use razor pages
+
+			builder.Services.AddSession(options =>
+			{
+				options.IdleTimeout = TimeSpan.FromMinutes(20); // وقت انتهاء الجلسة
+				options.Cookie.HttpOnly = true; // إعدادات الكوكي
+                options.Cookie.IsEssential = true;
+            });
+
+            builder.Services.AddAuthentication(options=>{ 
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultChallengeScheme = FacebookDefaults.AuthenticationScheme;
+            }).AddFacebook(options =>
+            {
+                options.AppId = "1226382705615893";
+                options.AppSecret = "80880aa24ed60b96b997ac586829b815";
+                options.CallbackPath = "/signin-facebook";
+            }
+                );
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -47,10 +68,10 @@ namespace ECommerce
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseSession();
             StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey")?.Value;
             app.UseRouting();
-            app.UseAuthentication();
-
+			app.UseAuthentication();
             app.UseAuthorization();
             app.MapRazorPages(); // 
             app.MapControllerRoute(

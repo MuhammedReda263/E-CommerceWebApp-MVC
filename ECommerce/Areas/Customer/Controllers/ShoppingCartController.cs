@@ -1,4 +1,5 @@
-﻿using ECommerce.DataAccess.Repository.IRepository;
+﻿using ECommerce.DataAccess.Repository;
+using ECommerce.DataAccess.Repository.IRepository;
 using ECommerce.Models;
 using ECommerce.Models.ViewModels;
 using ECommerce.Utility;
@@ -67,8 +68,9 @@ namespace ECommerce.Areas.Customer.Controllers
         
         public IActionResult remove(int cartid)
         {
-            var shoppingcart = _UnitOfWork.ShoppingCart.Get(x=> x.Id == cartid);
+            var shoppingcart = _UnitOfWork.ShoppingCart.Get(x=> x.Id == cartid,Tracked:true);
             _UnitOfWork.ShoppingCart.Remove(shoppingcart);
+            HttpContext.Session.SetInt32(SD.SessionCart, _UnitOfWork.ShoppingCart.GetAll(i => i.ApplicationUserId == shoppingcart.ApplicationUserId).Count()-1);
             _UnitOfWork.Save();
             return RedirectToAction(nameof(Index));
         }

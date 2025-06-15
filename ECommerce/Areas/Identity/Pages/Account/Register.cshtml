@@ -1,5 +1,6 @@
 ﻿@page
 @model RegisterModel
+@using ECommerce.Utility
 @{
     ViewData["Title"] = "Register";
 }
@@ -11,7 +12,15 @@
         <div class="col-md-7">
             <div class="card shadow-lg rounded-4">
                 <div class="card-body p-4">
+                    @if (User.IsInRole(SD.Role_Admin))
+                    {
+                        <h2 class="text-center mb-4">Create a New Account - Admin Portal</h2>
+
+                    }
+                    else{
                     <h2 class="text-center mb-4">Create a New Account</h2>
+                    }
+                  
                     <hr />
                     <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
@@ -69,54 +78,59 @@
                                 </div>
                             </div>
                         </div>
+                        @if (User.IsInRole(SD.Role_Admin))
+                        {
+                            <div class="form-floating mb-4">
+                                <select asp-for="Input.role" class="form-select" asp-items="@Model.Input.Rolelist">
+                                    <option selected disabled>-- Select Role --</option>
+                                </select>
+                                <label asp-for="Input.role">Role</label>
+                            </div>
 
-                        <div class="form-floating mb-4">
-                            <select asp-for="Input.role" class="form-select" asp-items="@Model.Input.Rolelist">
-                                <option selected disabled>-- Select Role --</option>
-                            </select>
-                            <label asp-for="Input.role">Role</label>
-                        </div>
-                        
-                        <div class="form-floating mb-4">
-                            <select asp-for="Input.CompanyId" class="form-select" style="display:none;" asp-items="@Model.Input.Companylist">
-                                <option selected disabled>-- Select Company --</option>
-                            </select>
-                            
-                        </div>
+                            <div class="form-floating mb-4">
+                                <select asp-for="Input.CompanyId" class="form-select" style="display:none;" asp-items="@Model.Input.Companylist">
+                                    <option selected disabled>-- Select Company --</option>
+                                </select>
+
+                            </div>
+                        }
 
                         <button type="submit" class="btn btn-primary w-100 py-2">Register</button>
                     </form>
                 </div>
             </div>
-
-            <div class="text-center mt-4">
-                <h5>Or register using another service</h5>
-                <hr />
-                @{
-                    if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                    {
-                        <div class="alert alert-warning">
-                            <p>
-                                No external authentication services are configured. See this
-                                <a href="https://go.microsoft.com/fwlink/?LinkID=532715" class="alert-link">
-                                    article about setting up external logins
-                                </a>.
-                            </p>
-                        </div>
+            @if(!User.IsInRole(SD.Role_Admin))
+            {
+                <div class="text-center mt-4">
+                    <h5>Or register using another service</h5>
+                    <hr />
+                    @{
+                        if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                        {
+                            <div class="alert alert-warning">
+                                <p>
+                                    No external authentication services are configured. See this
+                                    <a href="https://go.microsoft.com/fwlink/?LinkID=532715" class="alert-link">
+                                        article about setting up external logins
+                                    </a>.
+                                </p>
+                            </div>
+                        }
+                        else
+                        {
+                            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="d-flex flex-column gap-2">
+                                @foreach (var provider in Model.ExternalLogins!)
+                                {
+                                    <button type="submit" class="btn btn-outline-secondary" name="provider" value="@provider.Name" title="Log in using @provider.DisplayName">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i> Login with @provider.DisplayName
+                                    </button>
+                                }
+                            </form>
+                        }
                     }
-                    else
-                    {
-                        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="d-flex flex-column gap-2">
-                            @foreach (var provider in Model.ExternalLogins!)
-                            {
-                                <button type="submit" class="btn btn-outline-secondary" name="provider" value="@provider.Name" title="Log in using @provider.DisplayName">
-                                    <i class="bi bi-box-arrow-in-right me-2"></i> Login with @provider.DisplayName
-                                </button>
-                            }
-                        </form>
-                    }
-                }
-            </div>
+                </div>
+            }
+         
         </div>
 
 
