@@ -8,6 +8,8 @@ using ECommerce.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using ECommerce.Models;
 using Stripe;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication.Facebook;
 
 namespace ECommerce
 {
@@ -40,8 +42,21 @@ namespace ECommerce
 			{
 				options.IdleTimeout = TimeSpan.FromMinutes(20); // وقت انتهاء الجلسة
 				options.Cookie.HttpOnly = true; // إعدادات الكوكي
-			});
-			var app = builder.Build();
+                options.Cookie.IsEssential = true;
+            });
+
+            builder.Services.AddAuthentication(options=>{ 
+                options.DefaultScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultChallengeScheme = FacebookDefaults.AuthenticationScheme;
+            }).AddFacebook(options =>
+            {
+                options.AppId = "1226382705615893";
+                options.AppSecret = "80880aa24ed60b96b997ac586829b815";
+                options.CallbackPath = "/signin-facebook";
+            }
+                );
+
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
