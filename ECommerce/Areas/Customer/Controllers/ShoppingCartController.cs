@@ -211,6 +211,7 @@ namespace ECommerce.Areas.Customer.Controllers
                     _UnitOfWork.OrderHeader.UpdateStatus(id,SD.StatusApproved, SD.PaymentStatusApproved);
                     _UnitOfWork.Save();
                 }
+                HttpContext.Session.Clear();
 
             }
 
