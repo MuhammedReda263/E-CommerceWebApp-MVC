@@ -61,7 +61,7 @@ E-CommerceWebApp
 - **Backend:** ASP.NET Core 8, C#  
 - **Frontend:** Bootstrap 5, JavaScript  
 - **Database:** SQL Server, EF Core (Code-First)  
-- **Authentication:** ASP.NET Core Identity, JWT  
+- **Authentication:** ASP.NET Core Identity
 - **Payments:** Stripe  
 
 ---
